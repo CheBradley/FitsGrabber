@@ -63,7 +63,7 @@ def formatter(filename):
 								formattedFile.close()
 				else:
 					with open(formattedFilename, "a+") as formattedFile:
-						formattedFile.write(line+'\n')
+						formattedFile.write(location+'\n')
 						formattedFile.close()
 	if filetype == '2':
 		i = 0
