@@ -63,7 +63,7 @@ def formatter(filename):
 								formattedFile.close()
 				else:
 					with open(formattedFilename, "a+") as formattedFile:
-						formattedFile.write(location+'\n')
+						formattedFile.write(location)
 						formattedFile.close()
 	if filetype == '2':
 		i = 0
@@ -155,16 +155,15 @@ def fitsgrabber(filename, url, path):
 			#if they are, then it adds it to a file that holds the good values and moves on 
 			try:
 				driver.find_element_by_name("RA"); 
+				with open(savedFilename, "a+") as savedImages:
+					savedImages.write(RA)
+					savedImages.close()
 			except NoSuchElementException as exception:
 				with open(discardedFilename, "a+") as discardedImages:
 					discardedImages.write(RA)
 					discardedImages.close()
 					i += 1
-					driver.back()
-			else:
-				with open(savedFilename, "a+") as savedImages:
-					savedImages.write(RA)
-					savedImages.close()
+					driver.back()		
 		print(i, 'locations not found') 
 		driver.close() 
 		
