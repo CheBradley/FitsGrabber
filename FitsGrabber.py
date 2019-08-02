@@ -137,27 +137,18 @@ def fitsgrabber(filename, url, path):
 	with open(formattedFilename) as locations:
 		i = 0
 		for line in locations: 
-			RA = line
-			RAvalue = driver.find_element_by_name("RA"); 
-			RAvalue.clear() 
-			RAvalue.send_keys(RA) 
+			try: 
+				RA = line
+				RAvalue = driver.find_element_by_name("RA"); 
+				RAvalue.clear() 
+				RAvalue.send_keys(RA) 
 
-			Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
-			Imagesize.clear()
-			Imagesize.send_keys('1')
+				Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
+				Imagesize.clear()
+				Imagesize.send_keys('1')
 
-			Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
-
-			Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
-			
-			#checks to make sure the RA and Dec value option is still available
-			#if they are not, then it adds the RA and Dec value to a new file that holds the discarded values and goes back to the previous window
-			#if they are, then it adds it to a file that holds the good values and moves on 
-			try:
-				driver.find_element_by_name("RA"); 
-				with open(savedFilename, "a+") as savedImages:
-					savedImages.write(RA)
-					savedImages.close()
+				Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
+				Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
 			except NoSuchElementException as exception:
 				with open(discardedFilename, "a+") as discardedImages:
 					discardedImages.write(RA)
