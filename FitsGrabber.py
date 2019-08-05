@@ -7,7 +7,10 @@
 import sys
 import math
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 def main():
 	script = sys.argv[0]
@@ -137,19 +140,27 @@ def fitsgrabber(filename, url, path):
 	with open(formattedFilename) as locations:
 		i = 0
 		for line in locations: 
-			try: 
-				RA = line
-				RAvalue = driver.find_element_by_name("RA"); 
-				RAvalue.clear() 
-				RAvalue.send_keys(RA) 
+			RA = line
+			RAvalue = driver.find_element_by_name("RA"); 
+			RAvalue.clear() 
+			RAvalue.send_keys(RA)
+			 
+			Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
+			Imagesize.clear()
+			Imagesize.send_keys('1')
 
-				Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
-				Imagesize.clear()
-				Imagesize.send_keys('1')
-
-				Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
-				Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
-			except NoSuchElementException as exception:
+			Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
+			Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
+			
+			#tells the browser to wait at least 1 second while checking for RA element
+			#if they are not, then it adds the RA and Dec value to a new file that holds the discarded values and goes back to the previous window
+			#if they are, then it adds it to a file that holds the good values and moves on 
+			try:
+				element = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.NAME, "RA")))
+				with open(savedFilename, "a+") as savedImages:
+					savedImages.write(RA)
+					savedImages.close()
+			except TimeoutException as exception:
 				with open(discardedFilename, "a+") as discardedImages:
 					discardedImages.write(RA)
 					discardedImages.close()
@@ -159,8 +170,3 @@ def fitsgrabber(filename, url, path):
 		driver.close() 
 		
 main()
-		
-
-
-	
-
