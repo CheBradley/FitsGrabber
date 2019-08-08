@@ -39,7 +39,7 @@ def formatter(filename):
 	
 	"""
 	
-	formattedFilename = filename.strip(".txt") + 'formatted.txt'
+	formattedFilename = filename.replace('.txt','') + 'formatted.txt'
 	filetype = input('Press 1 if the file is in coordinate form or 2 if the file is in decimal form: ')
 	if filetype == '1':
 		with open(filename) as locations: 
