@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 def main():
 	script = sys.argv[0]
@@ -140,21 +140,27 @@ def fitsgrabber(filename, url, path):
 	with open(formattedFilename) as locations:
 		i = 0
 		for line in locations: 
-			RA = line
-			RAvalue = driver.find_element_by_name("RA"); 
-			RAvalue.clear() 
-			RAvalue.send_keys(RA)
-			 
-			Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
-			Imagesize.clear()
-			Imagesize.send_keys('1')
+			try:
+				RA = line
+				RAvalue = driver.find_element_by_name("RA"); 
+				RAvalue.clear() 
+				RAvalue.send_keys(RA)
+				 
+				Imagesize = driver.find_element_by_name("ImageSize"); #same process as above
+				Imagesize.clear()
+				Imagesize.send_keys('1')
 
-			Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
-			Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
-			
-			#tells the browser to wait at least 1 second while checking for RA element
-			#if they are not, then it adds the RA and Dec value to a new file that holds the discarded values and goes back to the previous window
-			#if they are, then it adds it to a file that holds the good values and moves on 
+				Imagetype = driver.find_element_by_xpath("//input[@name='ImageType'][@value='FITS File']").click() #selects the FITS file option
+				Submit = driver.find_element_by_name(".submit").click()	#finds the download button and clicks it
+				
+				#tells the browser to wait at least 1 second while checking for RA element
+				#if they are not, then it adds the RA and Dec value to a new file that holds the discarded values and goes back to the previous window
+				#if they are, then it adds it to a file that holds the good values and moves on 
+			except NoSuchElementException as exception:
+				with open(discardedFilename, "a+") as discardedImages:
+					discardedImages.write(RA)
+					discardedImages.close()
+				driver.back()
 			try:
 				element = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.NAME, "RA")))
 				with open(savedFilename, "a+") as savedImages:
