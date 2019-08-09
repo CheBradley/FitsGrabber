@@ -121,8 +121,6 @@ def fitsgrabber(filename, url, path):
 	
 	formattedFilename = formatter(filename)
 	
-	from selenium import webdriver 
-	
 	#these are all settings that set up a profile in the web browser so 
 	#that it will automatically download any file into a particular folder 
 	profile = webdriver.FirefoxProfile() 		
